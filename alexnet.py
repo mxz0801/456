@@ -17,10 +17,10 @@ train_data_dir='../chest/chest_xray/train/'
 validation_data_dir='../chest/chest_xray/val/'
 test_data_dir='../chest/chest_xray/test/'
 
-num_train_size = 323
+num_train_size = 300
 num_validation_size = 67
-epochs = 3
-batch_size = 16
+epochs = 20
+batch_size = 12
 
 img_width, img_height = 64, 64
 
@@ -28,27 +28,36 @@ input_shape=(img_width, img_height, 3)
 
 model = Sequential()
 model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu", padding="same",
-                 input_shape=(64,64,3)))
+                 input_shape=(64,64,3),kernel_initializer = keras.initializers.glorot_uniform(seed=None)))
+model.add(Conv2D(32,(3,3), activation="relu", padding="same"))
 model.add(MaxPooling2D(pool_size=(2,2)))
 
-model.add(Conv2D(32,(3,3)))
-model.add(Activation('relu'))
+model.add(Conv2D(filters=32,kernel_size=(3,3), activation="relu", padding="same",kernel_initializer = keras.initializers.glorot_uniform(seed=None)))
+model.add(Conv2D(filters=32,kernel_size=(3,3), activation="relu", padding="same"))
 model.add(MaxPooling2D(pool_size=(2,2)))
 
-model.add(Conv2D(64,(3,3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Conv2D(filters=64,kernel_size=(3,3), activation="relu", padding="same",kernel_initializer = keras.initializers.glorot_uniform(seed=None)))
+model.add(Conv2D(filters=64,kernel_size=(3,3), activation="relu", padding="same"))
 
+model.add(MaxPooling2D(pool_size=(2,2)))
 
 model.add(Flatten())
 model.add(Dense(64))
+model.add(BatchNormalization())
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+
+model.add(Dense(64))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+
 model.add(Dense(1))
-model.add(Activation('softmax'))
+model.add(BatchNormalization())
+model.add(Activation('sigmoid'))
+
+opt = keras.optimizers.rmsprop(lr=0.001, decay=1e-5)
 
 model.compile(loss='binary_crossentropy',
-              optimizer='rmsprop',
+              optimizer=opt,
               metrics=['accuracy'])
 
 
