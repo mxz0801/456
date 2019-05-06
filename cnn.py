@@ -79,6 +79,7 @@ train_datagen = ImageDataGenerator(
         zoom_range=0.1,
         horizontal_flip=True)
 
+test_datagen = ImageDataGenerator(rescale=1./255)
 
 #generating image from training images
 train_generator = train_datagen.flow_from_directory(
